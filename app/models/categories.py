@@ -1,15 +1,21 @@
-from sqlalchemy import Integer, String, Boolean
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, String, Boolean, Numeric
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.models.products import Product
 
 class Category(Base):
-    __tablename__ = 'categories'
+    __tablename__ = "categories"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-if __name__ == '__main__':
+    products: Mapped[list["Product"]] = relationship("Product", back_populates="category")
+
+if __name__ == "__main__":
     from sqlalchemy.schema import CreateTable
     from app.models.products import Product
     print(CreateTable(Category.__table__))
